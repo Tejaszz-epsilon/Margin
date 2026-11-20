@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Margin",
+  "version": "0.1.0",
+  "description": "Ask questions about long articles. Answers on-device by default; add your own API key for deeper reading.",
+
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://api.anthropic.com/*",
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+
+  "options_page": "src/options.html",
+
+  "action": {
+    "default_title": "Open Margin on this page"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "exclude_matches": [
+        "*://*.google.com/search*",
+        "*://mail.google.com/*",
+        "*://*.slack.com/*",
+        "*://docs.google.com/*"
+      ],
+      "js": [
+        "vendor/Readability-readerable.js",
+        "vendor/Readability.js",
+        "src/styles.js",
+        "src/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "commands": {
+    "toggle-margin": {
+      "suggested_key": { "default": "Alt+M" },
+      "description": "Toggle the Margin panel"
+    }
+  }
+}

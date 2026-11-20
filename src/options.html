@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Margin — Settings</title>
+<style>
+  :root {
+    --ink-900:#0F1216; --ink-800:#171B21; --ink-700:#212630; --line:#2C323D;
+    --paper:#E6E4DF; --muted:#878F9B; --brass:#C79A3E; --slate:#6E9DC4;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,monospace;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background:var(--ink-900); color:var(--paper); font-family:var(--serif);
+    padding:56px 24px 80px; line-height:1.6;
+  }
+  main { max-width:520px; margin:0 auto; }
+  h1 { font-size:26px; font-weight:400; letter-spacing:-0.01em; }
+  .sub { color:var(--muted); font-style:italic; margin-top:6px; font-size:15px; }
+  fieldset { border:0; border-top:1px solid var(--line); margin-top:34px; padding-top:22px; }
+  legend { display:none; }
+  .label {
+    font-family:var(--mono); font-size:10px; letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .opt { display:flex; gap:10px; align-items:flex-start; padding:9px 0; cursor:pointer; }
+  .opt input { margin-top:6px; accent-color:var(--brass); }
+  .opt .name { font-size:15px; }
+  .opt .why { color:var(--muted); font-size:13.5px; }
+  label.field { display:block; margin-top:18px; }
+  label.field span {
+    display:block; font-family:var(--mono); font-size:10px; letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:7px;
+  }
+  input[type=text], input[type=password], select {
+    width:100%; padding:10px; background:var(--ink-700); color:var(--paper);
+    border:1px solid var(--line); border-radius:1px; font-family:var(--mono); font-size:13px;
+  }
+  input:focus, select:focus { outline:none; border-color:var(--brass); }
+  .hint { color:var(--muted); font-size:13px; margin-top:7px; }
+  .bar { display:flex; align-items:center; gap:14px; margin-top:30px; }
+  button {
+    padding:11px 18px; background:none; color:var(--paper); border:1px solid var(--line);
+    border-radius:1px; font-family:var(--mono); font-size:11px; letter-spacing:0.11em;
+    text-transform:uppercase; cursor:pointer;
+  }
+  button:hover { border-color:var(--brass); color:var(--brass); }
+  #saved { font-family:var(--mono); font-size:11px; letter-spacing:0.08em; color:var(--brass); opacity:0; transition:opacity 180ms; }
+  #saved.on { opacity:1; }
+  .status { margin-top:20px; padding:12px 13px; border-left:2px solid var(--slate); background:var(--ink-800); font-size:14px; }
+  .status b { font-weight:400; color:var(--brass); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Margin</h1>
+  <p class="sub">On-device by default. Your key, if you add one, never leaves this browser.</p>
+
+  <div class="status" id="avail">Checking the on-device model…</div>
+
+  <fieldset>
+    <legend>Which model answers</legend>
+    <p class="label">Which model answers</p>
+    <label class="opt">
+      <input type="radio" name="mode" value="auto">
+      <span><span class="name">Use my key when I have one</span><br>
+      <span class="why">Falls back to the on-device model if the key fails or is missing.</span></span>
+    </label>
+    <label class="opt">
+      <input type="radio" name="mode" value="local">
+      <span><span class="name">Always on-device</span><br>
+      <span class="why">Nothing leaves your machine. Shorter memory, simpler answers, no web search.</span></span>
+    </label>
+    <label class="opt">
+      <input type="radio" name="mode" value="cloud">
+      <span><span class="name">Always my key</span><br>
+      <span class="why">Reads the whole article at once and can look beyond the page.</span></span>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Your API key</legend>
+    <p class="label">Your API key</p>
+    <label class="field">
+      <span>Provider</span>
+      <select id="provider">
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="gemini">Google (Gemini)</option>
+        <option value="openai">OpenAI</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Key</span>
+      <input type="password" id="key" placeholder="sk-…" autocomplete="off" spellcheck="false">
+      <p class="hint" id="keyhelp">Stored in this browser's extension storage. Margin sends it only to the provider you picked.</p>
+    </label>
+    <label class="field">
+      <span>Model (optional)</span>
+      <input type="text" id="model" placeholder="claude-sonnet-5"  spellcheck="false">
+    </label>
+    <label class="opt" style="margin-top:16px">
+      <input type="checkbox" id="search">
+      <span><span class="name">Let it search the web</span><br>
+      <span class="why" id="searchwhy">Anthropic and Gemini. Answers drawn from elsewhere are labelled in the panel.</span></span>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Reading profile</legend>
+    <p class="label">Reading profile</p>
+    <label class="opt">
+      <input type="checkbox" id="remember">
+      <span><span class="name">Remember what I read</span><br>
+      <span class="why">Keeps titles, links and keywords for the last 40 articles, in this browser only.
+      Never stores article text. Powers Compare and Suggest.</span></span>
+    </label>
+
+    <label class="field">
+      <span>Suggest reading at this depth</span>
+      <select id="depth">
+        <option value="auto">Learn it from what I read</option>
+        <option value="plain">Plain language</option>
+        <option value="balanced">General audience</option>
+        <option value="technical">Technical</option>
+      </select>
+      <p class="hint" id="profilenote">\u2014</p>
+    </label>
+
+    <div class="bar" style="margin-top:14px">
+      <button id="forget" type="button">Clear reading history</button>
+    </div>
+  </fieldset>
+
+  <div class="bar">
+    <button id="save">Save changes</button>
+    <span id="saved">Saved</span>
+  </div>
+</main>
+<script src="options.js"></script>
+</body>
+</html>
